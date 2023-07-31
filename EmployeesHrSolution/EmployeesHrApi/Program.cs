@@ -1,4 +1,7 @@
 
+using EmployeesHrApi.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace EmployeesHrApi
 {
     public class Program
@@ -13,7 +16,17 @@ namespace EmployeesHrApi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            
+            //db stuff here
 
+            var employeesConnectionString = builder.Configuration.GetConnectionString("employees") ?? throw new Exception("Need a Connection String");
+            //looks in a series of places for a connection string.  appsettings.json or appsettings.Develipment.json (what envirnonment your running in), ours is environment
+            //becuase the launchsettings.json shows development environmnet
+
+            builder.Services.AddDbContext<EmployeeDataContext>(options =>
+            {
+                options.UseSqlServer(employeesConnectionString);
+            });
 
             //above this is configuration for teh "behind the scenes stuff"
             var app = builder.Build();
