@@ -16,3 +16,8 @@ public record EmployeesSummaryResponseModel
     public string Email { get; set; } = string.Empty;
     public string Department { get; set; } = string.Empty;
 }
+
+public record EmployeeDetailsResponseModel : EmployeesSummaryResponseModel
+{
+    public string PhoneExtension { get; set; } = string.Empty;
+}
