@@ -5,6 +5,7 @@ namespace EmployeesHrApi.Models;
 public record EmployeesResponseModel
 {
     public List<EmployeesSummaryResponseModel> Employees { get; set; } = new();
+    public string ShowingDepartment { get; set; } = string.Empty;
 }
 
 public record EmployeesSummaryResponseModel

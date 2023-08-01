@@ -10,19 +10,41 @@ public class EmployeesController : ControllerBase
 {
 
     private readonly EmployeeDataContext _context;
+    private readonly ILogger<EmployeesController> _logger;
 
-    public EmployeesController(EmployeeDataContext context)
+    public EmployeesController(EmployeeDataContext context, ILogger<EmployeesController> logger)
     {
         _context = context;
+        _logger = logger;
     }
 
+
+    //GET /employees/3
+    [HttpGet("/employees/{employeeId:int}")]
+    public async Task<ActionResult> GetAnEmployeeAsync(int employeeId)
+    {
+        _logger.LogInformation("Got the following employeeId {0}", employeeId);
+        var employee = await _context.Employees
+            .Where(e => e.Id == employeeId)
+            .SingleOrDefaultAsync();
+
+        if (employee is null)
+        {
+            return NotFound(); // 404
+        }
+        else
+        {
+            return Ok(employee);
+        }
+
+    }
 
 
     // GET /employees
     [HttpGet("/employees")]
-    public async Task<ActionResult> GetEmployeesAsync()
+    public async Task<ActionResult<EmployeesResponseModel>> GetEmployeesAsync([FromQuery] string department = "All")
     {
-        var employees = await _context.Employees
+        var employees = await _context.GetEmployeesByDepartment(department) //this waits for the context of GetEmployeesByDeparment in the EmployeeDataContext.cs file then runs over it's code
             .Select(emp => new EmployeesSummaryResponseModel
             {
                 Id = emp.Id.ToString(),
@@ -31,12 +53,13 @@ public class EmployeesController : ControllerBase
                 Department = emp.Department,
                 Email = emp.Email,
             })
-            .ToListAsync();
+            .ToListAsync(); //runs the query at this point
         // TODO: Get Back to This
 
         var response = new EmployeesResponseModel
         {
-            Employees = employees
+            Employees = employees,
+            ShowingDepartment = department
         };
         return Ok(response);
     }
