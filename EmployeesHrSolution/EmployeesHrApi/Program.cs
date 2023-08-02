@@ -1,4 +1,5 @@
 
+using AutoMapper;
 using EmployeesHrApi.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,15 @@ namespace EmployeesHrApi
                 options.UseSqlServer(employeesConnectionString);
             });
 
+            var mapperConfig = new MapperConfiguration(opt =>
+            {
+                opt.AddProfile<EmployeesHrApi.AutomapperProfiles.Employees>();
+                opt.AddProfile<EmployeesHrApi.AutomapperProfiles.HiringRequestProfile>();
+            });
+            var mapper = mapperConfig.CreateMapper();
+
+            builder.Services.AddSingleton<IMapper>(mapper);
+            builder.Services.AddSingleton<MapperConfiguration>(mapperConfig);
             //above this is configuration for teh "behind the scenes stuff"
             var app = builder.Build();
             //everything after this is setting up Middleware - that's the code that receives the HTTP request and makes the response

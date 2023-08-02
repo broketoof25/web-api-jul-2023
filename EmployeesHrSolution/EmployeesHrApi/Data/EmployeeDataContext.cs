@@ -9,8 +9,13 @@ public class EmployeeDataContext : DbContext
 
     }
     public DbSet<Employee> Employees { get; set; }
+    public DbSet<HiringRequests> HiringRequests { get; set; }
 
-    //this method returns an IQuearyable that knows how to get just the employees in a department or all of them
+    /// <summary>
+    /// This method returns an IQueryable that knows how to get just the employees in a department, or all of them.
+    /// </summary>
+    /// <param name="department"></param>
+    /// <returns></returns>
     public IQueryable<Employee> GetEmployeesByDepartment(string department)
     {
         if (department != "All")
@@ -22,5 +27,4 @@ public class EmployeeDataContext : DbContext
             return Employees;
         }
     }
-
 }
